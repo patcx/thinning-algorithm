@@ -11,6 +11,7 @@ namespace ThinningAlgorithm.Models.Algorithms
     public class K3MAlgorithm : ITransformAlgorithm
     {
         private int[][] A;
+        private int[] A1pix;
 
         public K3MAlgorithm()
         {
@@ -33,9 +34,9 @@ namespace ThinningAlgorithm.Models.Algorithms
                 237, 239, 240, 241, 243, 244, 245, 246,
                 247, 248, 249, 251, 252, 253, 254, 255
             };
-            A[1] = new int[] {7, 14, 28, 56, 112, 131, 193, 224};
-            A[2] = new int[] {7, 14, 15, 28, 30, 56, 60, 112, 120, 131, 135, 193, 195, 224, 225, 240};
-            A[3] = new int[] {7, 14, 15, 28, 30, 31, 56, 60, 62, 112, 120,124, 131, 135, 143, 193, 195, 199, 224, 225, 227, 240, 241, 248};
+            A[1] = new int[] { 7, 14, 28, 56, 112, 131, 193, 224 };
+            A[2] = new int[] { 7, 14, 15, 28, 30, 56, 60, 112, 120, 131, 135, 193, 195, 224, 225, 240 };
+            A[3] = new int[] { 7, 14, 15, 28, 30, 31, 56, 60, 62, 112, 120, 124, 131, 135, 143, 193, 195, 199, 224, 225, 227, 240, 241, 248 };
             A[4] = new int[]
             {
                 7, 14, 15, 28, 30, 31, 56, 60, 62, 63, 112, 120, 124, 126, 131, 135, 143, 159, 193, 195, 199, 207, 224,
@@ -48,10 +49,19 @@ namespace ThinningAlgorithm.Models.Algorithms
                 207, 224, 225, 227, 231, 239, 240, 241, 243, 248,
                 249, 251, 252, 254
             };
+            A1pix = new int[]
+            {
+                3, 6, 7, 12, 14, 15, 24, 28, 30, 31, 48, 56,
+                60, 62, 63, 96, 112, 120, 124, 126, 127, 129, 131,
+                135, 143, 159, 191, 192, 193, 195, 199, 207, 223,
+                224, 225, 227, 231, 239, 240, 241, 243, 247, 248,
+                249, 251, 252, 253, 254
+            };
         }
 
         public void Transform(Bitmap bmp)
         {
+            int c = 0;
             var result = bmp;
             bool isAnyChange = false;
             var imageSource = result.ConvertToBytes();
@@ -60,13 +70,13 @@ namespace ThinningAlgorithm.Models.Algorithms
                 isAnyChange = false;
                 for (int i = 0; i < 6; i++)
                 {
-                    if (Phase(imageSource, i) && i!=0)
+                    if (Phase(imageSource, i) && i != 0)
                         isAnyChange = true;
                 }
                 PhaseUnmark(imageSource);
 
-            } while (isAnyChange); 
-
+            } while (isAnyChange);
+            Phase1pxWidth(imageSource);
             result.LoadFromBytes(imageSource, 1);
         }
 
@@ -82,14 +92,27 @@ namespace ThinningAlgorithm.Models.Algorithms
             }
         }
 
-        private bool Phase(byte[,] imageSource, int phaseNr)
+        private void Phase1pxWidth(byte[,] imageSource)
         {
-            bool isAnyChange = false;   
             for (int j = 1; j < imageSource.GetLength(0) - 1; j++)
             {
                 for (int i = 1; i < imageSource.GetLength(1) - 1; i++)
                 {
-                    if ((imageSource[j, i] != 2 && phaseNr != 0) || (phaseNr == 0 && imageSource[j,i] != 1))
+                    int weight = GetWeightOfPixels(imageSource, j, i);
+                    if (A1pix.Contains(weight))
+                        imageSource[j, i] = 0;
+                }
+            }
+        }
+
+        private bool Phase(byte[,] imageSource, int phaseNr)
+        {
+            bool isAnyChange = false;
+            for (int j = 1; j < imageSource.GetLength(0) - 1; j++)
+            {
+                for (int i = 1; i < imageSource.GetLength(1) - 1; i++)
+                {
+                    if ((imageSource[j, i] != 2 && phaseNr != 0) || (phaseNr == 0 && imageSource[j, i] != 1))
                         continue;
 
                     var weight = GetWeightOfPixels(imageSource, j, i);

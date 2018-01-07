@@ -27,11 +27,20 @@ namespace ThinningAlgorithm.Models
             imageLoaded = ((Bitmap)Image.FromFile(path)).ConvertImage(ImageFormat.Jpeg);
             imageLoaded.ApplyTransform(new Grayscale());
             imageLoaded.ApplyTransform(new Binaryzation(0.3f));
+            imageResult = (Bitmap)imageLoaded.Clone();
+        }
 
+        public void ProcessKMM()
+        {
+            imageResult = (Bitmap)imageLoaded.Clone();
+            imageResult.ApplyTransform(new KMMAlgorithm());
+        }
+
+        public void ProcessK3M()
+        {
             imageResult = (Bitmap)imageLoaded.Clone();
             imageResult.ApplyTransform(new K3MAlgorithm());
         }
-
 
         public BitmapImage GetImageResult()
         {

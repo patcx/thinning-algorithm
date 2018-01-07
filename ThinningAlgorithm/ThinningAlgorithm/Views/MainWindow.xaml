@@ -47,9 +47,11 @@
             <mahApps:ProgressRing Grid.RowSpan="2" IsActive="{Binding IsLoading}" Foreground="{DynamicResource AccentColorBrush}"/>
 
         <StackPanel Grid.Column="1" Margin="10">
-                <Button Command="{Binding LoadImage}" Margin="10" VerticalAlignment="Top" Height="30"  Content="Wczytaj"/>
-               
-            </StackPanel>
+            <Button Command="{Binding LoadImage}" Margin="10" VerticalAlignment="Top" Height="30"  Content="Wczytaj"/>
+            <Button Command="{Binding ProcessK3M}" Margin="10" VerticalAlignment="Top" Height="30"  Content="K3M"/>
+            <Button Command="{Binding ProcessKMM}" Margin="10" VerticalAlignment="Top" Height="30"  Content="KMM"/>
+
+        </StackPanel>
 
         </Grid>
 

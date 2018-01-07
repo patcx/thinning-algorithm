@@ -21,6 +21,18 @@ namespace ThinningAlgorithm.ViewModels
         public bool IsLoading { get; set; }
         public BitmapImage Image { get; private set; }
 
+        public ICommand ProcessKMM  => new RelayCommand(() =>
+        {
+            model.ProcessKMM();
+            ReloadImage();
+        });
+
+        public ICommand ProcessK3M => new RelayCommand(() =>
+        {
+            model.ProcessK3M();
+            ReloadImage();
+        });
+
         public ICommand Loaded => new RelayCommand(() =>
         {
             try
